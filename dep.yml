@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-dep
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cicd
+  template:
+    metadata:
+      labels:
+        app: cicd
+    spec:
+      containers:
+      - name: web
+        image: DOCKERUSER/IMAGENAME:BUILDNUMBER
+        imagePullPolicy: Always
+        ports:
+        - name: nginxport
+          containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-dep-svc
+spec:
+  ports:
+  - port: 9999
+    nodePort: 32007
+    targetPort: nginxport
+    protocol: TCP
+  selector:
+    app: cicd
+  type: NodePort
